@@ -1,0 +1,5 @@
+name: DispenseIt
+main: uk.co.kieraan.dispenseit.DispenseIt
+version: 0.1
+author: Kieraan
+description: Block certain items from being dispensed.

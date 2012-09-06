@@ -1,0 +1,15 @@
+#
+# DispenseIt
+# By Kieraan
+#
+
+# Set to true to block and false to allow.
+items:
+  WATER_BUCKET: true
+  LAVA_BUCKET: true
+  ARROW: true
+  SLIME_BALL: false
+
+# Do not change this, this will reset
+# the config if changed
+version: 0.1
