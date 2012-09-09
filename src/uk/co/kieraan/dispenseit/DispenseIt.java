@@ -41,11 +41,16 @@ public class DispenseIt extends JavaPlugin implements Listener {
         String materialName = event.getItem().getType().toString();
         Location loc = event.getBlock().getLocation();
 
-        if (this.getConfig().getBoolean("items." + materialName)) {
-            event.setCancelled(true);
-            this.getLogger().info("Stopped " + materialName + " from being dispensed. (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
+        if (this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
+            this.getLogger().info(materialName + " was just dispensed. (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
         }
 
+        if (this.getConfig().getBoolean("deny." + materialName)) {
+            event.setCancelled(true);
+            if (this.getConfig().getString("consoleLog").equalsIgnoreCase("BLOCKED")) {
+                this.getLogger().info("Stopped " + materialName + " from being dispensed. (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
+            }
+        }
     }
 
     @EventHandler
@@ -54,11 +59,15 @@ public class DispenseIt extends JavaPlugin implements Listener {
         Material block = event.getBlock().getType();
         Location loc = event.getBlock().getLocation();
 
-        if (block == Material.DISPENSER) {
-            if (!player.hasPermission("dispenseit.place")) {
-                player.sendMessage(ChatColor.RED + "You cannot place that block!");
-                this.getLogger().info("Blocked " + player.getName() + " from placing a dispenser (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
-                event.setCancelled(true);
+        if (this.getConfig().getBoolean("usePermission")) {
+            if (block == Material.DISPENSER) {
+                if (!player.hasPermission("dispenseit.place")) {
+                    player.sendMessage(ChatColor.RED + "You cannot place that block!");
+                    if (this.getConfig().getString("consoleLog").equalsIgnoreCase("BLOCKED") || this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
+                        this.getLogger().info("Blocked " + player.getName() + " from placing a dispenser (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
+                    }
+                    event.setCancelled(true);
+                }
             }
         }
     }

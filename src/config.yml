@@ -3,8 +3,37 @@
 # By Kieraan
 #
 
-# Set to true to block and false to allow.
-items:
-  WATER_BUCKET: true
-  LAVA_BUCKET: true
-  ARROW: true
+# Console Logging.
+# ALL = Outputs all dispenser usage and attempts at placing dispensers.
+# BLOCKED = Outputs blocked dispenser usage and attempts at placing dispensers.
+# NONE = Outputs nothing.
+
+consoleLog: ALL
+
+# Dispenser Placement Permission.
+# true = Players need the dispenseit.place permission node to place dispensers.
+# false = Player do not need any permission nodes to place dispensers.
+
+usePermission: false
+
+# Dispenser Item Blacklisting
+# true = Block dispensers from being able to dispense the item.
+# false = Allow dispensers to dispense the item.
+# Note: You may add any item to this list, please lookup the correct name, however.
+
+deny:
+  WATER_BUCKET: false
+  LAVA_BUCKET: false
+  ARROW: false
+  FIREBALL: false
+  EGG: false
+  SNOW_BALL: false
+  POTION: false
+  EXP_BOTTLE: false
+  MINECART: false
+  STORAGE_MINECART: false
+  POWERED_MINECART: false
+  BOAT: false
+  MONSTER_EGG: false
+
+# Also note: MONSTER_EGG accounts for all spawn eggs, non-hostile and hostile.
