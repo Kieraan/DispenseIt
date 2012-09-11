@@ -37,3 +37,12 @@ deny:
   MONSTER_EGG: false
 
 # Also note: MONSTER_EGG accounts for all spawn eggs, non-hostile and hostile.
+
+
+# Startup Log and usage information
+# This does not effect performance in any way, it just gives me a way to track usage.
+# true = Logs startup
+# false = Does not log startup whatsoever.
+
+logStartup: true
+

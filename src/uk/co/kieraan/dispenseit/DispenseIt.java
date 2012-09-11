@@ -28,7 +28,10 @@ public class DispenseIt extends JavaPlugin implements Listener {
         this.getServer().getPluginManager().registerEvents(this, this);
 
         this.getLogger().info("Loaded " + this.getDescription().getName() + " v" + this.getDescription().getVersion());
-        logStartup();
+        if (this.getConfig().getBoolean("logStartup")) {
+            logStartup();
+        }
+
     }
 
     @Override
