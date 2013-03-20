@@ -1,5 +1,5 @@
 #
-# DispenseIt
+# DispenseIt 0.3
 # By Kieraan
 #
 
@@ -10,39 +10,50 @@
 
 consoleLog: ALL
 
-# Dispenser Placement Permission.
-# true = Players need the dispenseit.place permission node to place dispensers.
-# false = Player do not need any permission nodes to place dispensers.
+# Placement Permissions.
+# true = Players need the dispenseit.place permission node to place dispensers/droppers.
+# false = Player do not need any permission nodes to place dispensers/droppers.
 
-usePermission: false
+usePermission: 
+  dispenser: false
+  dropper: false
 
-# Dispenser Item Blacklisting
-# true = Block dispensers from being able to dispense the item.
-# false = Allow dispensers to dispense the item.
+# Item Blacklisting
+# true = Blocks the item/block from being dispensed/dropped.
+# false = Allows the item/block from being dispensed/dropped.
 # Note: You may add any item to this list, please lookup the correct name, however.
 
-deny:
-  WATER_BUCKET: false
-  LAVA_BUCKET: false
-  ARROW: false
-  FIREBALL: false
-  EGG: false
-  SNOW_BALL: false
-  POTION: false
-  EXP_BOTTLE: false
-  MINECART: false
-  STORAGE_MINECART: false
-  POWERED_MINECART: false
-  BOAT: false
-  MONSTER_EGG: false
+blacklist:
+
+  dispenser:    
+    WATER_BUCKET: false
+    LAVA_BUCKET: false
+    ARROW: false
+    FIREBALL: false
+    EGG: false
+    SNOW_BALL: false
+    POTION: false
+    EXP_BOTTLE: false
+    MINECART: false
+    STORAGE_MINECART: false
+    POWERED_MINECART: false
+    BOAT: false
+    MONSTER_EGG: false
+    
+  dropper:
+    WATER_BUCKET: false
+    LAVA_BUCKET: false
+    ARROW: false
+    FIREBALL: false
+    EGG: false
+    SNOW_BALL: false
+    POTION: false
+    EXP_BOTTLE: false
+    MINECART: false
+    STORAGE_MINECART: false
+    POWERED_MINECART: false
+    BOAT: false
+    MONSTER_EGG: false
 
 # Also note: MONSTER_EGG accounts for all spawn eggs, non-hostile and hostile.
-
-
-# Startup Log and usage information
-# This does not effect performance in any way, it just gives me a way to track usage.
-# true = Logs startup
-# false = Does not log startup whatsoever.
-
-logStartup: true
 

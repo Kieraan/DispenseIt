@@ -1,9 +1,7 @@
 package uk.co.kieraan.dispenseit;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStreamReader;
-import java.net.URL;
+import java.io.IOException;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -15,6 +13,8 @@ import org.bukkit.event.block.BlockDispenseEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import org.mcstats.MetricsLite;
+
 public class DispenseIt extends JavaPlugin implements Listener {
 
     @Override
@@ -25,13 +25,15 @@ public class DispenseIt extends JavaPlugin implements Listener {
             this.reloadConfig();
         }
 
-        this.getServer().getPluginManager().registerEvents(this, this);
-
-        this.getLogger().info("Loaded " + this.getDescription().getName() + " v" + this.getDescription().getVersion());
-        if (this.getConfig().getBoolean("logStartup")) {
-            logStartup();
+        try {
+            MetricsLite metrics = new MetricsLite(this);
+            metrics.start();
+        } catch (IOException e) {
+            // Stats no worky :(
         }
 
+        this.getServer().getPluginManager().registerEvents(this, this);
+        this.getLogger().info("Loaded " + this.getDescription().getName() + " v" + this.getDescription().getVersion());
     }
 
     @Override
@@ -43,16 +45,23 @@ public class DispenseIt extends JavaPlugin implements Listener {
     public void onBlockDispense(BlockDispenseEvent event) {
         String materialName = event.getItem().getType().toString();
         Location loc = event.getBlock().getLocation();
+        Material block = event.getBlock().getType();
+        String type = "dispensed";
 
-        if (this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
-            this.getLogger().info(materialName + " was just dispensed. (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
+        if (block.equals(Material.DROPPER)) {
+            type = "dropped";
         }
 
-        if (this.getConfig().getBoolean("deny." + materialName)) {
+        if ((this.getConfig().getBoolean("blacklist.dispenser." + materialName) && type.equals("dispensed")) || (this.getConfig().getBoolean("blacklist.dropper." + materialName) && type.equals("dropped"))) {
             event.setCancelled(true);
-            if (this.getConfig().getString("consoleLog").equalsIgnoreCase("BLOCKED")) {
-                this.getLogger().info("Stopped " + materialName + " from being dispensed. (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
+            if (this.getConfig().getString("consoleLog").equalsIgnoreCase("BLOCKED") || this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
+                this.getLogger().info("Stopped " + materialName + " from being " + type + ". (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
             }
+            return;
+        }
+        
+        if (this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
+            this.getLogger().info(materialName + " was just " + type + ". (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
         }
     }
 
@@ -62,35 +71,30 @@ public class DispenseIt extends JavaPlugin implements Listener {
         Material block = event.getBlock().getType();
         Location loc = event.getBlock().getLocation();
 
-        if (this.getConfig().getBoolean("usePermission")) {
-            if (block == Material.DISPENSER) {
-                if (!player.hasPermission("dispenseit.place")) {
+        if (this.getConfig().getBoolean("usePermission.dispenser")) {
+            if (block.equals(Material.DROPPER)) {
+                if (!player.hasPermission("dispenseit.place.dispenser")) {
                     player.sendMessage(ChatColor.RED + "You cannot place that block!");
                     if (this.getConfig().getString("consoleLog").equalsIgnoreCase("BLOCKED") || this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
                         this.getLogger().info("Blocked " + player.getName() + " from placing a dispenser (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
                     }
                     event.setCancelled(true);
+                    return;
                 }
             }
         }
-    }
 
-    public void logStartup() {
-        try {
-            String pluginName = this.getDescription().getName();
-            String pluginVersion = this.getDescription().getVersion();
-            URL url = new URL("http://kieraan.co.uk/plugins/collectData.php?name=" + pluginName + "&version=" + pluginVersion);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.equals("RECEIVED")) {
-                    this.getLogger().info("Startup logged.");
-                } else {
-                    this.getLogger().severe("Failed to log plugin startup. (Webserver error.)");
+        if (this.getConfig().getBoolean("usePermission.dropper")) {
+            if (block.equals(Material.DROPPER)) {
+                if (!player.hasPermission("dispenseit.place.dropper")) {
+                    player.sendMessage(ChatColor.RED + "You cannot place that block!");
+                    if (this.getConfig().getString("consoleLog").equalsIgnoreCase("BLOCKED") || this.getConfig().getString("consoleLog").equalsIgnoreCase("ALL")) {
+                        this.getLogger().info("Blocked " + player.getName() + " from placing a dropper (X:" + loc.getBlockX() + ", Y:" + loc.getBlockY() + ", Z:" + loc.getBlockZ() + ")");
+                    }
+                    event.setCancelled(true);
+                    return;
                 }
             }
-        } catch (Exception e) {
-            this.getLogger().severe("Failed to log plugin startup. (Connection error.)");
         }
     }
 
